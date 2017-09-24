@@ -1,31 +1,37 @@
 Sub normalizeData()
-    Dim filePath As String
-    Dim fileName As String
-    Dim targetBook As Workbook
+    Dim fileName As Variant
     Dim targetSheet As Worksheet
-    Dim settingSheet As Worksheet
     Dim recordSheet As Worksheet
     Dim lastRow As Long
     Dim count As Long
     Dim category As String
 
-    'read settings
-    Set settingSheet = ThisWorkbook.Worksheets("setting")
-    Set recordSheet = ThisWorkbook.Worksheets("record")
-    filePath = settingSheet.Range("B1").Value
-    fileName = settingSheet.Range("B2").Value
-    'fileName = InputBox("input your file name")
+    Dim colNumber As Long
+    Dim startRow As Long
+    Dim endRow As Long
 
-    'open a report File
-    Set targetBook = Workbooks.Open(fileName)
-    Set targetSheet = Worksheets("data")
-    targetBook.Activate
+    'set a sheet for normalized data
+    colNumber = 7
+    startRow = 6
+    endRow = 20
+    Set recordSheet = ThisWorkbook.Worksheets("record")
+    Application.ScreenUpdating = False
+
+    'open the report file
+    fileName = Application.GetOpenFilename()
+    If fileName <> False Then
+         Workbooks.Open fileName
+    Else
+        Exit Sub
+    End If
+
     'add a sheet for temporary data
     Worksheets.Add Before:=Worksheets(1)
+    Set targetSheet = Worksheets("data")
 
     'write category and subcategory data
     count = 1
-    For i = 6 To 20
+    For i = startRow To endRow
         If targetSheet.Range("A" & i).Value = "others" Then
             Exit For
         ElseIf targetSheet.Range("A" & i).Interior.ColorIndex <> xlNone Then
@@ -33,7 +39,7 @@ Sub normalizeData()
         Else
             'subcategory
             Range("F" & count) = targetSheet.Range("A" & i)
-            Range("G" & count) = targetSheet.Range("B" & i)
+            Range("G" & count) = targetSheet.Range("B" & i).Text
             'category
             Range("E" & count) = category
             count = count + 1
@@ -41,23 +47,19 @@ Sub normalizeData()
     Next
 
     'write other data
-    'longWorkHours = Hour(strWorkHours) + (Minute(strWorkHours) / 60)
-    Range("A1:A" & count - 1) = targetSheet.Range("B1")
+    Range("A1:A" & count - 1) = targetSheet.Range("B1").Text
     Range("B1:B" & count - 1) = targetSheet.Range("B2")
-    Range("C1:C" & count - 1) = targetSheet.Range("B3")
-    Range("D1:D" & count - 1) = targetSheet.Range("B4")
+    Range("C1:C" & count - 1) = targetSheet.Range("B3").Text
+    Range("D1:D" & count - 1) = targetSheet.Range("B4").Text
 
     'copy data to another sheet
     lastRow = recordSheet.Cells(Rows.count, 1).End(xlUp).Row + 1
-    Range("A1").Resize(count, 7).Copy _
+    Application.DisplayAlerts = False
+    Range("A1").Resize(count, colNumber).Copy _
         recordSheet.Range("A" & lastRow)
 
-    'delete a temporary sheet
-    If Worksheets.count = 2 Then
-        Application.DisplayAlerts = False
-        Worksheets(1).Delete
-    End If
-    targetBook.Close
+    'close the report file
+    ActiveWorkbook.Close False
     Application.DisplayAlerts = True
 
 End Sub
