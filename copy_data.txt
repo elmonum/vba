@@ -1,0 +1,63 @@
+Sub normalizeData()
+    Dim filePath As String
+    Dim fileName As String
+    Dim targetBook As Workbook
+    Dim targetSheet As Worksheet
+    Dim settingSheet As Worksheet
+    Dim recordSheet As Worksheet
+    Dim lastRow As Long
+    Dim count As Long
+    Dim category As String
+
+    'read settings
+    Set settingSheet = ThisWorkbook.Worksheets("setting")
+    Set recordSheet = ThisWorkbook.Worksheets("record")
+    filePath = settingSheet.Range("B1").Value
+    fileName = settingSheet.Range("B2").Value
+    'fileName = InputBox("input your file name")
+
+    'open a report File
+    Set targetBook = Workbooks.Open(fileName)
+    Set targetSheet = Worksheets("data")
+    targetBook.Activate
+    'add a sheet for temporary data
+    Worksheets.Add Before:=Worksheets(1)
+
+    'write category and subcategory data
+    count = 1
+    For i = 6 To 20
+        If targetSheet.Range("A" & i).Value = "others" Then
+            Exit For
+        ElseIf targetSheet.Range("A" & i).Interior.ColorIndex <> xlNone Then
+            category = targetSheet.Range("A" & i)
+        Else
+            'subcategory
+            Range("F" & count) = targetSheet.Range("A" & i)
+            Range("G" & count) = targetSheet.Range("B" & i)
+            'category
+            Range("E" & count) = category
+            count = count + 1
+        End If
+    Next
+
+    'write other data
+    'longWorkHours = Hour(strWorkHours) + (Minute(strWorkHours) / 60)
+    Range("A1:A" & count - 1) = targetSheet.Range("B1")
+    Range("B1:B" & count - 1) = targetSheet.Range("B2")
+    Range("C1:C" & count - 1) = targetSheet.Range("B3")
+    Range("D1:D" & count - 1) = targetSheet.Range("B4")
+
+    'copy data to another sheet
+    lastRow = recordSheet.Cells(Rows.count, 1).End(xlUp).Row + 1
+    Range("A1").Resize(count, 7).Copy _
+        recordSheet.Range("A" & lastRow)
+
+    'delete a temporary sheet
+    If Worksheets.count = 2 Then
+        Application.DisplayAlerts = False
+        Worksheets(1).Delete
+    End If
+    targetBook.Close
+    Application.DisplayAlerts = True
+
+End Sub
