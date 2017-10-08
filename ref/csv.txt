@@ -1,0 +1,21 @@
+'******************************************************
+'CSV のデータを取り込み
+'******************************************************
+Sub csvToExcel()
+    Dim ws As Worksheet
+    Set ws = ActiveSheet ' CSV のデータを取り込むシート
+
+    Dim qt As QueryTable
+    Dim fName As String
+    fName = Application.GetOpenFilename()
+    If fName = "False" Then Exit Sub
+    Set qt = ws.QueryTables.Add(Connection:="TEXT;" & fName, Destination:=ws.Range("A1")) ' CSV を開く
+    With qt
+        ''.TextFilePlatform = 65001          ' 文字コードを指定: 65001(UTF-8),932(Shift-JIS)
+        .TextFileParseType = xlDelimited ' 区切り文字の形式
+        .TextFileCommaDelimiter = True   ' カンマ区切り
+        .RefreshStyle = xlOverwriteCells ' セルに上書き
+        .Refresh                         ' データを表示
+        .Delete                          ' CSV との接続を解除
+    End With
+End Sub

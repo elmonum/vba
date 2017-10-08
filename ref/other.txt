@@ -1,0 +1,38 @@
+Sub deleteRow()
+    'Dim ws As Worksheet
+    'Set ws = ActiveSheet
+
+    Dim lastRow_A As Long
+    Dim lastRow_B As Long
+    lastRow_A = Cells(Rows.Count, 1).End(xlUp).Row + 1
+    lastRow_B = Cells(Rows.Count, 2).End(xlUp).Row
+    Rows(lastRow_A & ":" & lastRow_B).Select
+    Selection.Delete
+
+End Sub
+
+Sub formatTime()
+    Const toTimeFormat = 86400
+    Dim ary() As Single
+    Dim length As Long
+    Dim i As Long
+    Dim distTimeCol As Long
+    Dim souFirst As Long
+
+    distTimeCol = 2
+    souFirst = 1
+    ActiveSheet.UsedRange.Select
+    length = Selection.Rows.Count - 1
+    ReDim ary(length, 0)
+
+    For i = 0 To length
+            'ary(i) = Cells(i + 1, souFirst) / toTimeFormat
+            'Cells(i + 1, distTimeCol).Value = ary(i)
+            ary(i, 0) = Cells(i + 1, souFirst) / toTimeFormat
+    Next i
+    Cells(1, distTimeCol).Resize(length + 1, 1).Value = ary
+    'change custom format
+    Columns(distTimeCol).NumberFormatLocal = "[h]:mm:ss"
+    Range("A1").Select
+
+End Sub

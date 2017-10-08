@@ -1,0 +1,31 @@
+'*********************************************************
+'　空白行の一括削除　　Delete_Rows_w_Blank
+'*********************************************************
+Sub Delete_Rows_w_Blank
+　　Dim　GYO　As Long
+　　Dim　KuhakuGyo　As Range
+　　Dim　r　As Long
+
+　　 ' A列をみて表の最終行を取得する
+　　GYO = Cells (Rows.Count, 1).End (xlUp).Row
+　　'2行目から最終行までB列のセルをチェックします
+　　With ActiveSheet
+　　　　For　r = 2 To GYO
+　　　　'B列のセルが空白なら変数 KuhakuGyo に追加
+　　　　If　IsEmpty(Cells(r, 2).Value)　Then
+　　　　　　'最初の空白行に出会ったら行全体を KuhakuGyo にセット
+　　　　　　If　KuhakuGyo　Is Nothing Then
+　　　　　　　　Set KuhakuGyo = .Rows(r).EntireRow
+　　　　　　'2件目からは順次 KuhakuGyo に追加していく
+　　　　　　Else
+　　　　　　　　Set　KuhakuGyo = Union(KuhakuGyo, .Rows(r).EntireRow)
+　　　　　　End If
+　　　　End If
+　　　　Next　r
+　　End With
+
+　　'空白行があれば一括で削除する
+　　If Not　KuhakuGyo　Is Nothing Then
+　　　　KuhakuGyo.Delete
+　　End If
+End Sub

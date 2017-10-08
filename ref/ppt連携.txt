@@ -1,0 +1,22 @@
+'******************************************************
+'「Microsoft PowerPoint X.X Object Library」というライブラリを追加
+'PowerPointにグラフを貼り付ける
+'******************************************************
+Sub PowerPointにグラフを貼り付ける()
+
+Dim ppApp As New PowerPoint.Application
+ppApp.Visible = True
+
+Dim ppPrs As PowerPoint.Presentation
+Set ppPrs = ppApp.Presentations.Open(ThisWorkbook.Path & "\ひな形.pptx")
+
+Dim ws As Worksheet
+Set ws = ThisWorkbook.Worksheets("Sheet2")
+
+ws.ChartObjects("Chart 1").chart.CopyPicture xlScreen, xlPicture 'グラフを画像としてコピー
+ppPrs.Slides(1).Shapes.Paste 'グラフ画像をペースト
+
+'ppApp.Quit
+'Set ppApp = Nothing 'オブジェクトを開放
+
+End Sub

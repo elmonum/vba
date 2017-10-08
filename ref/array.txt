@@ -1,0 +1,63 @@
+'******************************************************
+'配列で"1月"から"12月"の各値をA1セルからA12セルにそれぞれ入れる'
+'******************************************************
+Sub arraySample3()
+    Dim month(11) As String
+    Dim i As Long
+
+    For i = 0 To 11
+        month(i) = i + 1 & "月"
+        Cells(i + 1, 1) = month(i)
+    Next i
+End Sub
+
+'******************************************************
+' 動的配列サンプル
+'******************************************************
+Sub arraySample5()
+    '動的配列を宣言
+    Dim ary() As String
+
+    'セル範囲の行数を取得し、それを配列の要素数として使うための変数
+    Dim length As Long
+    Dim i As Long
+
+    '既に使用されているセル範囲を選択
+    ActiveSheet.UsedRange.Select
+
+    '現在選択されているセル範囲の行数を取得し、そこから「1」を引くことで配列の要素数とする
+    length = Selection.Rows.Count - 1
+
+    '動的配列の要素数を確定
+    ReDim ary(length)
+
+    '「配列の要素数」回、繰り返す
+    For i = 0 To length
+        '配列にA1:A12の値を格納
+        ary(i) = Cells(i + 1, 1)
+        '配列に格納した値をB1:B12に書き込む
+        Cells(i + 1, 2) = ary(i)
+    Next i
+End Sub
+
+'******************************************************
+' 連想配列のアイテムを一覧表示するマクロ
+'******************************************************
+Sub associativeArraySample2()
+    '都道府県の人口を表す連想配列
+    Dim population As New Collection
+
+    population.Add Item:="1363万6222人", Key:="東京都"
+    population.Add Item:="784万2077人", Key:="北海道"
+    population.Add Item:="883万7812人", Key:="大阪府"
+
+    Dim items As Variant
+    Dim cnt As Long
+    cnt = 1
+
+    'A列に連想配列「population」のアイテムを一覧表示する
+    For Each items In population
+        Cells(cnt, 1) = items
+        cnt = cnt + 1
+    Next
+End Sub

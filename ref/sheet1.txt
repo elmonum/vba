@@ -1,0 +1,52 @@
+Sub sheet1()
+    Dim souRow As Long
+    Dim distRow As Long
+
+    Dim souBook As String
+    Dim souSheetOrder As Long
+    Dim souFirst As String
+    Dim souLast As String
+    Dim distSheet As String
+    Dim distFirst As String
+    Dim distLast As String
+
+    beforeProcess
+
+    souRow = 6
+    distRow = 8
+    With ThisWorkbook
+        With Worksheets("setting")
+            sourceBook = .Range("C2").Value + .Range("D" & souRow).Value
+            souSheetOrder = .Range("E" & souRow).Value
+            souFirst = .Range("F" & souRow).Value
+            souLast = .Range("G" & souRow).Value
+            distSheet = .Range("E" & distRow).Value
+            distFirst = .Range("F" & distRow).Value
+            distLast = .Range("G" & distRow).Value
+        End With
+
+        'move data
+        .Worksheets(distSheet).Activate
+        .ActiveSheet.Range("A1").Select
+        .ActiveSheet.Range("C3", "N5").Copy _
+            Destination:=Range("B3", "M5")
+
+        'paste new format
+        .Worksheets("sheet1_format").Range("A1", "M2").Copy _
+            Destination:=.ActiveSheet.Range("B1", "N2")
+    End With
+
+    With Workbooks.Open(sourceBook)
+        'copy and paste
+        .Worksheets(souSheetOrder).Range(souFirst, souLast).Copy
+        ThisWorkbook.Worksheets(distSheet).Range(distFirst, distLast).PasteSpecial _
+            xlPasteValues
+        'Cancels Cut or Copy mode and removes the moving border
+        Application.CutCopyMode = False
+        'close book without saving
+        .Close False
+    End With
+
+    afterProcess
+
+End Sub

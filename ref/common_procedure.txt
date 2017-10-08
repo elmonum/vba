@@ -1,0 +1,18 @@
+Sub beforeProcess()
+    With Application
+        .ScreenUpdating = False
+        .EnableEvents = False
+        '.Calculation = xlCalculationManual
+        '.DisplayAlert = false
+    End With
+End Sub
+
+Sub afterProcess()
+    With Application
+        .ScreenUpdating = True
+        .EnableEvents = True
+        '.Calculation = xlCalculationAutomatic
+        '.DisplayAlert = true
+    End With
+    'ThisWorkbook.Worksheets("setting").Activate
+End Sub
